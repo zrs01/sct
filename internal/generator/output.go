@@ -7,6 +7,8 @@ import (
 	"srcode/internal/config"
 	"srcode/internal/utils"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Option struct {
@@ -14,12 +16,14 @@ type Option struct {
 	TemplateFile string
 	ModuleName   string
 	Namespace    string
+	DataFile     string // user-defined data, it will be passed to the template engine
 }
 
 type Context struct {
 	Name string
 	Cs   []utils.Csharp
 	Ts   []utils.TypeScript
+	Data map[interface{}]interface{}
 }
 
 func Output(option Option) error {
@@ -38,10 +42,23 @@ func Output(option Option) error {
 		tsClasses = append(tsClasses, utils.TypescriptParse(file))
 	}
 
+	// user-defined data
+	data := make(map[interface{}]interface{})
+	if option.DataFile != "" {
+		fileContent, err := os.ReadFile(option.DataFile)
+		if err != nil {
+			panic(err)
+		}
+		if err := yaml.Unmarshal([]byte(fileContent), &data); err != nil {
+			panic(err)
+		}
+	}
+
 	context := Context{
 		Name: option.ModuleName,
 		Cs:   csClasses,
 		Ts:   tsClasses,
+		Data: data,
 	}
 	utils.MergeTemplate(path.Join(cfg.TemplatePath, option.TemplateFile), context, os.Stdout)
 	return nil

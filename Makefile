@@ -3,7 +3,7 @@
 HOSTOS=$(shell go env GOHOSTOS)
 HOSTARCH=$(shell go env GOHOSTARCH)
 
-EXECUTABLE=srcode
+EXECUTABLE=sct
 WINDOWS=$(EXECUTABLE)_windows_amd64.exe
 LINUX=$(EXECUTABLE)_linux_amd64
 DARWIN=$(EXECUTABLE)_darwin_amd64

@@ -1,8 +1,9 @@
+{{- data := .Data }}
 {{- range .Cs }}
 // -------------------------------- {{ .Name }} -------------------------------
 using Cms.Repo.Entity;
 
-namespace {{ .Namespace }};
+namespace {{ data.Namespace }};
 
 public class {{ .Name }}Dto : {{ .Name }} {
     public new byte[]? RowVer { get; set; }

@@ -15,7 +15,7 @@ var version = "development"
 func main() {
 	cliapp := cli.NewApp()
 	cliapp.Name = "srcode"
-	cliapp.Usage = "Source code generator"
+	cliapp.Usage = "Source code template"
 	cliapp.Version = version
 	cliapp.Commands = []*cli.Command{}
 
@@ -31,6 +31,13 @@ func main() {
 			Value:       "config.yml",
 			Required:    false,
 			Destination: &cfile,
+		},
+		&cli.StringFlag{
+			Name:        "data",
+			Aliases:     []string{"d"},
+			Usage:       "user-defined data file in yaml format",
+			Required:    false,
+			Destination: &option.DataFile,
 		},
 		&cli.StringFlag{
 			Name:        "namespace",
