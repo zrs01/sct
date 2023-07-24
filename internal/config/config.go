@@ -6,10 +6,9 @@ import (
 )
 
 type Setting struct {
-	LangType     string   `default:"dotnet" yaml:"langType"` // dotnet | java
-	DaoPath      []string `default:"." yaml:"daoPath"`
-	DtoPath      []string `default:"." yaml:"dtoPath"`
-	TemplatePath string   `yaml:"templatePath"`
+	LangType     string   `default:"dotnet" yaml:"lang-type"` // dotnet | java
+	EntityPath   []string `default:"." yaml:"entity-path"`
+	TemplatePath string   `yaml:"template-path"`
 }
 
 var cfile string

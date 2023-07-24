@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"srcode/internal/config"
+	"sct/internal/config"
 	"strings"
 	"unicode"
 
@@ -16,8 +16,8 @@ func GetEntityFiles(entity string) []string {
 	config := config.GetConfig()
 	igfiles := strings.Split(entity, ",")
 	for i := 0; i < len(igfiles); i++ {
-		for j := 0; j < len(config.DaoPath); j++ {
-			igfiles[i] = filepath.Join(config.DaoPath[j], igfiles[i])
+		for j := 0; j < len(config.EntityPath); j++ {
+			igfiles[i] = filepath.Join(config.EntityPath[j], igfiles[i])
 		}
 	}
 	return igfiles

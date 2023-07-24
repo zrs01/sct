@@ -1,5 +1,5 @@
 {{- data := .Data }}
-{{- range .Cs }}
+{{- range .Entity }}
 // -------------------------------- {{ .Name }} -------------------------------
 using Cms.Repo.Entity;
 

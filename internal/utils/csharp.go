@@ -7,9 +7,8 @@ import (
 )
 
 type Csharp struct {
-	Namespace string
-	Name      string
-	Members   []CsharpMember
+	Name    string
+	Members []CsharpMember
 }
 
 type CsharpMember struct {

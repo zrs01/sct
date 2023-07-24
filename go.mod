@@ -1,4 +1,4 @@
-module srcode
+module sct
 
 go 1.20
 

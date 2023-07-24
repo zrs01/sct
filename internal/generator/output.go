@@ -4,42 +4,34 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"srcode/internal/config"
-	"srcode/internal/utils"
+	"sct/internal/config"
+	"sct/internal/utils"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Option struct {
-	CsharpFile   string
+	Entity       string
 	TemplateFile string
 	ModuleName   string
-	Namespace    string
 	DataFile     string // user-defined data, it will be passed to the template engine
 }
 
 type Context struct {
-	Name string
-	Cs   []utils.Csharp
-	Ts   []utils.TypeScript
-	Data map[interface{}]interface{}
+	Name   string
+	Entity []utils.Csharp
+	Data   map[interface{}]interface{}
 }
 
 func Output(option Option) error {
 	cfg := config.GetConfig()
-	if len(cfg.DaoPath) == 0 {
-		panic("DAO path cannot be found in configuration")
-	}
 
 	var csClasses []utils.Csharp
-	var tsClasses []utils.TypeScript
-	csFiles := flatenFile(option.CsharpFile)
+	csFiles := flatenFile(option.Entity)
 	for _, file := range csFiles {
 		csClass := utils.CsharpParse(file)
-		csClass.Namespace = option.Namespace
 		csClasses = append(csClasses, csClass)
-		tsClasses = append(tsClasses, utils.TypescriptParse(file))
 	}
 
 	// user-defined data
@@ -55,12 +47,16 @@ func Output(option Option) error {
 	}
 
 	context := Context{
-		Name: option.ModuleName,
-		Cs:   csClasses,
-		Ts:   tsClasses,
-		Data: data,
+		Name:   option.ModuleName,
+		Entity: csClasses,
+		Data:   data,
 	}
-	utils.MergeTemplate(path.Join(cfg.TemplatePath, option.TemplateFile), context, os.Stdout)
+	templateFile := option.TemplateFile
+	if cfg.TemplatePath != "" {
+		templateFile = path.Join(cfg.TemplatePath, option.TemplateFile)
+	}
+
+	utils.MergeTemplate(templateFile, context, os.Stdout)
 	return nil
 }
 
@@ -68,8 +64,12 @@ func flatenFile(input string) []string {
 	cfg := config.GetConfig()
 
 	files := strings.Split(input, ",")
-	for i := 0; i < len(files); i++ {
-		files[i] = filepath.Join(cfg.DaoPath[0], files[i])
+	if len(cfg.EntityPath) > 0 {
+		for j := 0; j < len(cfg.EntityPath); j++ {
+			for i := 0; i < len(files); i++ {
+				files[i] = filepath.Join(cfg.EntityPath[j], files[i])
+			}
+		}
 	}
 	return utils.SearchExactGlobFiles(files)
 }

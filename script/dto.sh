@@ -1,2 +1,6 @@
 #!/bin/bash
-srcode -t dto.tpl -n Cms.Repo.Model -e $1
+tee data.yml << EOF
+Namespace: <namespace>
+EOF
+./sct -d data.yml $*
+rm data.yml
