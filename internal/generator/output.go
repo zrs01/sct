@@ -32,8 +32,7 @@ func Output(option Option) error {
 	var csClasses []utils.Entity
 	csFiles := flatenFile(option.Entity)
 	for _, file := range csFiles {
-		csClass := utils.ParseEntity(file)
-		csClasses = append(csClasses, csClass)
+		csClasses = append(csClasses, utils.ParseEntity(file))
 	}
 
 	// user-defined data
