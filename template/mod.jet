@@ -1,0 +1,7 @@
+{{- range .Entity }}
+export interface {{ .Name }} {
+  {{- range .Members }}
+  {{ lower(.Name[:1]) + .Name[1:] }}?: {{ typescriptType(.DataType, .IsCollection) }};
+  {{- end }}
+}
+{{ end }}

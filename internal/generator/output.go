@@ -4,33 +4,35 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"sct/internal/config"
+	"sct/internal/ts"
 	"sct/internal/utils"
 	"strings"
 
+	"github.com/CloudyKit/jet/v6"
 	"gopkg.in/yaml.v2"
 )
 
 type Option struct {
 	Entity       string
 	TemplateFile string
-	ModuleName   string
 	DataFile     string // user-defined data, it will be passed to the template engine
 }
 
 type Context struct {
 	Name   string
-	Entity []utils.Csharp
+	Entity []utils.Entity
 	Data   map[interface{}]interface{}
 }
 
 func Output(option Option) error {
 	cfg := config.GetConfig()
 
-	var csClasses []utils.Csharp
+	var csClasses []utils.Entity
 	csFiles := flatenFile(option.Entity)
 	for _, file := range csFiles {
-		csClass := utils.CsharpParse(file)
+		csClass := utils.ParseEntity(file)
 		csClasses = append(csClasses, csClass)
 	}
 
@@ -47,7 +49,6 @@ func Output(option Option) error {
 	}
 
 	context := Context{
-		Name:   option.ModuleName,
 		Entity: csClasses,
 		Data:   data,
 	}
@@ -56,7 +57,18 @@ func Output(option Option) error {
 		templateFile = path.Join(cfg.TemplatePath, option.TemplateFile)
 	}
 
-	utils.MergeTemplate(templateFile, context, os.Stdout)
+	// define global function
+	vars := make(jet.VarMap)
+	vars.SetFunc("typescriptType", func(a jet.Arguments) reflect.Value {
+		// parameters
+		dataType := a.Get(0)
+		isCollection := a.Get(1)
+		return reflect.ValueOf(ts.ToType(dataType.String(), isCollection.Bool()))
+	})
+
+	if err := utils.GetTemplate(templateFile).Execute(os.Stdout, vars, context); err != nil {
+		panic(err)
+	}
 	return nil
 }
 

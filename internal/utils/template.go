@@ -1,13 +1,12 @@
 package utils
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/CloudyKit/jet/v6"
 )
 
-func MergeTemplate(tpl string, data interface{}, out *os.File) {
+func GetTemplate(tpl string) *jet.Template {
 	loader := jet.NewOSFileSystemLoader(filepath.Dir(tpl))
 
 	views := jet.NewSet(loader, jet.InDevelopmentMode())
@@ -15,7 +14,5 @@ func MergeTemplate(tpl string, data interface{}, out *os.File) {
 	if err != nil {
 		panic(err)
 	}
-	if err := view.Execute(out, nil, data); err != nil {
-		panic(err)
-	}
+	return view
 }
