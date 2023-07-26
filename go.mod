@@ -1,4 +1,4 @@
-module sctutil
+module github.com/zrs01/sct
 
 go 1.20
 

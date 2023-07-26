@@ -5,10 +5,11 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
-	"sctutil/internal/config"
-	"sctutil/internal/ts"
-	"sctutil/internal/utils"
 	"strings"
+
+	"github.com/zrs01/sct/internal/config"
+	"github.com/zrs01/sct/internal/ts"
+	"github.com/zrs01/sct/internal/utils"
 
 	"github.com/CloudyKit/jet/v6"
 	"gopkg.in/yaml.v2"

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"sctutil/internal/config"
 	"strings"
 	"unicode"
+
+	"github.com/zrs01/sct/internal/config"
 
 	"github.com/rotisserie/eris"
 	"github.com/thoas/go-funk"
