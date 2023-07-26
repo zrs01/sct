@@ -5,9 +5,9 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
-	"sct/internal/config"
-	"sct/internal/ts"
-	"sct/internal/utils"
+	"sctutil/internal/config"
+	"sctutil/internal/ts"
+	"sctutil/internal/utils"
 	"strings"
 
 	"github.com/CloudyKit/jet/v6"

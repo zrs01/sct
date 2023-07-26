@@ -1,4 +1,4 @@
-module sct
+module sctutil
 
 go 1.20
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"sct/internal/config"
+	"sctutil/internal/config"
 	"strings"
 	"unicode"
 

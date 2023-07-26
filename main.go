@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"sct/internal/generator"
+	"sctutil/internal/generator"
 
 	"github.com/rotisserie/eris"
 	"github.com/urfave/cli/v2"
