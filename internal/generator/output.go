@@ -22,7 +22,6 @@ type Option struct {
 }
 
 type Context struct {
-	Name   string
 	Entity []utils.Entity
 	Data   map[interface{}]interface{}
 }

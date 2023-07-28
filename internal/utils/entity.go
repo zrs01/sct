@@ -4,17 +4,21 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/thoas/go-funk"
 )
 
 type Entity struct {
-	Name    string
-	Members []EntityMember
+	Name                 string
+	Members              []EntityMember
+	IsContainsVirtual    bool
+	IsContainsCollection bool
 }
 
 type EntityMember struct {
 	Name         string
-	Virtual      bool
-	Optional     bool
+	IsVirtual    bool
+	IsOptional   bool
 	DataType     string
 	IsCollection bool
 }
@@ -42,8 +46,8 @@ func ParseEntity(fullPathFileName string) Entity {
 			if matchMember != nil {
 				member := EntityMember{
 					Name:         matchMember[4],
-					Virtual:      len(matchMember[1]) > 0,
-					Optional:     len(matchMember[3]) > 0,
+					IsVirtual:    len(matchMember[1]) > 0,
+					IsOptional:   len(matchMember[3]) > 0,
 					DataType:     matchMember[2],
 					IsCollection: false,
 				}
@@ -59,5 +63,12 @@ func ParseEntity(fullPathFileName string) Entity {
 			}
 		}
 	}
+
+	entity.IsContainsVirtual = funk.Contains(entity.Members, func(m EntityMember) bool {
+		return m.IsVirtual
+	})
+	entity.IsContainsCollection = funk.Contains(entity.Members, func(m EntityMember) bool {
+		return m.IsCollection
+	})
 	return entity
 }

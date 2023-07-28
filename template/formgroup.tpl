@@ -1,8 +1,8 @@
-{{- range .Ts }}
+{{- range .Entity }}
 // -------------------------------- {{ .Name }} -------------------------------
 new FormGroup({
   {{- range .Members }}
-  {{ lower(.Name[:1]) + .Name[1:] }}: new FormControl<{{ raw(.DataType) }}{{ .Value == "null" ? " | null" : "" }}>({{ raw(.Value) }}{{ .Value != "null" ? ", { nonNullable: true }": "" }}),
+  {{ lower(.Name[:1]) + .Name[1:] }}: new FormControl<{{ typescriptType(.DataType, .IsCollection) }} | null>(null),
   {{- end }}
 });
 {{ end }}
