@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/CloudyKit/jet/v6 v6.1.0
+	github.com/alecthomas/repr v0.2.0
 	github.com/jinzhu/configor v1.2.1
 	github.com/rotisserie/eris v0.5.4
 	github.com/shomali11/util v0.0.0-20220717175126-f0771b70947f

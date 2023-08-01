@@ -52,8 +52,8 @@ func Output(option Option) error {
 		Data:   data,
 	}
 	templateFile := option.TemplateFile
-	if cfg.TemplatePath != "" {
-		templateFile = path.Join(cfg.TemplatePath, option.TemplateFile)
+	if cfg.Dotnet.TemplatePath != "" {
+		templateFile = path.Join(cfg.Dotnet.TemplatePath, option.TemplateFile)
 	}
 
 	// define global function
@@ -75,10 +75,10 @@ func flatenFile(input string) []string {
 	cfg := config.GetConfig()
 
 	files := strings.Split(input, ",")
-	if len(cfg.EntityPath) > 0 {
-		for j := 0; j < len(cfg.EntityPath); j++ {
+	if len(cfg.Dotnet.EntityPath) > 0 {
+		for j := 0; j < len(cfg.Dotnet.EntityPath); j++ {
 			for i := 0; i < len(files); i++ {
-				files[i] = filepath.Join(cfg.EntityPath[j], files[i])
+				files[i] = filepath.Join(cfg.Dotnet.EntityPath[j], files[i])
 			}
 		}
 	}

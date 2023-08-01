@@ -17,8 +17,8 @@ func GetEntityFiles(entity string) []string {
 	config := config.GetConfig()
 	igfiles := strings.Split(entity, ",")
 	for i := 0; i < len(igfiles); i++ {
-		for j := 0; j < len(config.EntityPath); j++ {
-			igfiles[i] = filepath.Join(config.EntityPath[j], igfiles[i])
+		for j := 0; j < len(config.Dotnet.EntityPath); j++ {
+			igfiles[i] = filepath.Join(config.Dotnet.EntityPath[j], igfiles[i])
 		}
 	}
 	return igfiles

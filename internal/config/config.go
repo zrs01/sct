@@ -6,9 +6,12 @@ import (
 )
 
 type Setting struct {
-	LangType     string   `default:"dotnet" yaml:"lang-type"` // dotnet | java
-	EntityPath   []string `default:"." yaml:"entity-path"`
-	TemplatePath string   `yaml:"template-path"`
+	// LangType     string   `default:"dotnet" yaml:"lang-type"` // dotnet | java
+	Dotnet struct {
+		DbContext    string   `yaml:"db-context"`
+		EntityPath   []string `default:"." yaml:"entity-path"`
+		TemplatePath string   `yaml:"template-path"`
+	}
 }
 
 var cfile string

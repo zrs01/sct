@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/thoas/go-funk"
+	"github.com/zrs01/sct/internal/config"
 )
 
 type Entity struct {
@@ -21,6 +24,7 @@ type EntityMember struct {
 	IsOptional   bool
 	DataType     string
 	IsCollection bool
+	MaxLength    int
 }
 
 func ParseEntity(fullPathFileName string) Entity {
@@ -70,5 +74,47 @@ func ParseEntity(fullPathFileName string) Entity {
 	entity.IsContainsCollection = funk.Contains(entity.Members, func(m EntityMember) bool {
 		return m.IsCollection
 	})
+
+	// addition information
+	updateEntity(&entity)
+	// repr.Println(entity)
 	return entity
+}
+
+func updateEntity(entity *Entity) {
+	cfg := config.GetConfig()
+	fileBytes, err := os.ReadFile(cfg.Dotnet.DbContext)
+	if err != nil {
+		panic(err)
+	}
+	fileContent := strings.ReplaceAll(string(fileBytes), "\n", "")
+
+	match := regexp.MustCompile(fmt.Sprintf(`modelBuilder.Entity<%s>\(entity\s*=>\s*\{([^\}]*)\}\);`, entity.Name)).
+		FindStringSubmatch(fileContent)
+	if match == nil {
+		return
+	}
+	modelBuilder := match[1]
+
+	matchs := regexp.MustCompile(`\.Property\([a-z] => [a-z].([^\)]*)\)\.HasMaxLength\((\d+)\)`).
+		FindAllStringSubmatch(modelBuilder, -1)
+	if matchs != nil {
+		funk.ForEach(matchs, func(x []string) {
+			memberName := x[1]
+			maxLength := mustAtoi(x[2])
+			for i := 0; i < len(entity.Members); i++ {
+				if entity.Members[i].Name == memberName {
+					entity.Members[i].MaxLength = maxLength
+				}
+			}
+		})
+	}
+}
+
+func mustAtoi(s string) int {
+	ans, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return ans
 }

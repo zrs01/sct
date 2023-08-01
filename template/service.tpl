@@ -24,7 +24,7 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
         _context = serviceProvider.GetRequiredService<{{ data.Team }}DbContext>();
         _serviceProvider = serviceProvider;
     }
-
+{*
 {{- if .IsContainsVirtual || .IsContainsCollection }}
 
     protected override async Task<SearchResult<CpaRpt>> SearchActionAsync(SearchCriteria criteria) {
@@ -78,6 +78,7 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
         await base.DeleteActionAsync<T>(id);
     }
 {{- end }}
+*}
 }
 
 /* ------------------------- Add below to Program.cs ------------------------ */
