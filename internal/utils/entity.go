@@ -21,8 +21,8 @@ type Entity struct {
 type EntityMember struct {
 	Name         string
 	IsVirtual    bool
-	IsOptional   bool
 	DataType     string
+	IsOptional   bool
 	IsCollection bool
 	MaxLength    int
 }
@@ -49,15 +49,14 @@ func ParseEntity(fullPathFileName string) Entity {
 			matchMember := regexMember.FindStringSubmatch(line)
 			if matchMember != nil {
 				member := EntityMember{
-					Name:         matchMember[4],
 					IsVirtual:    len(matchMember[1]) > 0,
-					IsOptional:   len(matchMember[3]) > 0,
 					DataType:     matchMember[2],
+					IsOptional:   len(matchMember[3]) > 0,
+					Name:         matchMember[4],
 					IsCollection: false,
 				}
 				if strings.HasPrefix(member.DataType, "ICollection") {
-					regexCollection := regexp.MustCompile(`ICollection<(\w+)>`)
-					matchCollection := regexCollection.FindStringSubmatch(member.DataType)
+					matchCollection := regexp.MustCompile(`ICollection<(\w+)>`).FindStringSubmatch(member.DataType)
 					if matchCollection != nil {
 						member.DataType = matchCollection[1]
 						member.IsCollection = true

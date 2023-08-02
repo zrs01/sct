@@ -24,7 +24,6 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
         _context = serviceProvider.GetRequiredService<{{ data.Team }}DbContext>();
         _serviceProvider = serviceProvider;
     }
-{*
 {{- if .IsContainsVirtual || .IsContainsCollection }}
 
     protected override async Task<SearchResult<CpaRpt>> SearchActionAsync(SearchCriteria criteria) {
@@ -32,14 +31,20 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
             foreach (var option in (criteria.options ?? new Dictionary<string, string>())) {
   {{- range .Members }}
     {{- if .IsVirtual && !.IsCollection }}
-                if (string.Equals(option.Key, "{{ .Name }}", StringComparison.OrdinalIgnoreCase)) {
-                    query = query.Where(x => _context.{{ .Name }}.RSql(option.Value).Select(x => x.{{ .Name }}Id).Contains(x.{{ .Name }}Id));
+                if (string.Equals(option.Key, "{{ .DataType }}", StringComparison.OrdinalIgnoreCase)) {
+                    query = query.Where(q => _context.{{ .DataType }}.RSql(option.Value).Select(x => x.{{ .DataType }}Id).Contains(q.{{ .Name }}Id));
                 }
     {{- end }}
     {{- if .IsCollection }}
+        {{- if .DataType == entity }}
                 if (string.Equals(option.Key, "{{ .Name }}", StringComparison.OrdinalIgnoreCase)) {
-                    query = query.Where(x => _context.{{ .Name }}.RSql(option.Value).Select(x => x.{{ entity }}Id).Contains(x.{{ entity }}Id));
+                    query = query.Where(q => _context.{{ .DataType }}.RSql(option.Value).Select(x => x.{{ replace(.Name, "Inverse", "", 1) }}Id).Contains(q.{{ entity }}Id));
                 }
+        {{- else }}
+                if (string.Equals(option.Key, "{{ .DataType }}", StringComparison.OrdinalIgnoreCase)) {
+                    query = query.Where(q => _context.{{ .DataType }}.RSql(option.Value).Select(x => x.{{ .DataType }}Id).Contains(q.{{ entity }}Id));
+                }
+        {{- end }}
     {{- end }}
   {{- end }}
             }
@@ -55,10 +60,17 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
         if (typedDto != null) {
   {{- range .Members }}
     {{- if .IsCollection }}
+        {{- if .DataType == entity }}
             if (typedDto.{{ .Name }} != null) {
-                var daoSet = await _context.{{ .Name }}.Where(x => x.{{ entity }}Id == typedDto.{{ entity }}Id).ToListAsync();
-                await _serviceProvider.GetRequiredService<I{{ .Name }}Service>().UpdateCollection(typedDto.{{ .Name }}, daoSet);
+                var daoSet = await _context.{{ .DataType }}.Where(x => x.{{  replace(.Name, "Inverse", "", 1) }}Id == typedDto.{{ entity }}Id).ToListAsync();
+                await _serviceProvider.GetRequiredService<I{{ .DataType }}Service>().UpdateCollection(typedDto.{{ .Name }}, daoSet);
             }
+        {{- else }}
+            if (typedDto.{{ .Name }} != null) {
+                var daoSet = await _context.{{ .DataType }}.Where(x => x.{{ entity }}Id == typedDto.{{ entity }}Id).ToListAsync();
+                await _serviceProvider.GetRequiredService<I{{ .DataType }}Service>().UpdateCollection(typedDto.{{ .Name }}, daoSet);
+            }
+        {{- end}}
     {{- end }}
   {{- end }}
         }
@@ -70,15 +82,20 @@ public class {{ .Name }}Service : CRUDService<{{ data.Team }}DbContext, {{ .Name
     public override async Task DeleteActionAsync<T>(int id) {
   {{- range .Members }}
     {{- if .IsCollection }}
-        foreach (var dao in await _context.{{ .Name }}.Where(x => x.{{ .Name }}Id == id).ToListAsync()) {
-            await _serviceProvider.GetRequiredService<I{{ .Name }}Service>().DeleteActionAsync<{{ .Name }}>(dao.{{ .Name }}Id);
+        {{- if .DataType == entity }}
+        foreach (var dao in await _context.{{ .DataType }}.Where(x => x.{{ replace(.Name, "Inverse", "", 1) }}Id == id).ToListAsync()) {
+            await _serviceProvider.GetRequiredService<I{{ .DataType }}Service>().DeleteActionAsync<{{ .DataType }}>(dao.{{ .DataType }}Id);
         }
+        {{- else }}
+        foreach (var dao in await _context.{{ .DataType }}.Where(x => x.{{ .DataType }}Id == id).ToListAsync()) {
+            await _serviceProvider.GetRequiredService<I{{ .DataType }}Service>().DeleteActionAsync<{{ .DataType }}>(dao.{{ .DataType }}Id);
+        }
+        {{- end }}
     {{- end }}
   {{- end }}
         await base.DeleteActionAsync<T>(id);
     }
 {{- end }}
-*}
 }
 
 /* ------------------------- Add below to Program.cs ------------------------ */
