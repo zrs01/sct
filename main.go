@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/zrs01/sct/internal/config"
 	"github.com/zrs01/sct/internal/generator"
 
 	"github.com/rotisserie/eris"
@@ -56,6 +57,7 @@ func main() {
 	}
 
 	cliapp.Action = func(ctx *cli.Context) error {
+		config.InitConfig(cfile)
 		generator.Output(option)
 		return nil
 	}
