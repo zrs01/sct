@@ -82,6 +82,13 @@ func ParseEntity(fullPathFileName string) Entity {
 
 func updateEntity(entity *Entity) {
 	cfg := config.GetConfig()
+	if cfg.Dotnet.DbContext == "" {
+		return
+	}
+	if _, err := os.Stat(cfg.Dotnet.DbContext); os.IsNotExist(err) {
+		return
+	}
+
 	fileBytes, err := os.ReadFile(cfg.Dotnet.DbContext)
 	if err != nil {
 		panic(err)
